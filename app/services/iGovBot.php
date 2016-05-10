@@ -22,16 +22,16 @@ class iGovBot extends TinyBot{
         $log->save();
 
         $input=trim($input);
-        $message='Ничего не смогли найти';
+        $message='Нічого не знайдено';
 
 
-        if (mb_strlen($input,'UTF-8')<=2) return array('state'=>'default', 'message'=>'Поиск работает от 3 символов и больше');
+        if (mb_strlen($input,'UTF-8')<=2) return array('state'=>'default', 'message'=>'Пошук працює від 3 та більше символів');
         if ((is_numeric($input)) AND (mb_strlen($input,'UTF-8')==8)) {
 
             $sql="SELECT * FROM legal_entities WHERE code=".$input;
             $res = $connection->query($sql);
             if ($r=$res->fetch()) {
-                $message="По коду <b>".$input."</b> найдена компания \n\n".$this->showCompaniesList(array($r));
+                $message="За кодом <b>".$input."</b> знайдено компанію: \n\n".$this->showCompaniesList(array($r));
             }
 
 
@@ -62,9 +62,9 @@ class iGovBot extends TinyBot{
                     $cache->save($msql, $rows);
                 }
 
-                $message="По названию <b>".$input."</b> найдено компаний — ". $lc."\n\n";
+                $message="За назвою <b>".$input."</b> знайдено компаній: ". $lc."\n\n";
                 if ($lc>10) {
-                    $message.="Показываем первые 10 \n\n";
+                    $message.="Показано перші 10 \n\n";
                 }
 
                 $message.=$this->showCompaniesList($rows);
@@ -98,9 +98,9 @@ class iGovBot extends TinyBot{
                         $cache->save($msql, $rows);
                     }
 
-                    $message = "По имени директора <b>".$input."</b> найдено компаний — " . $lc . "\n\n";
+                    $message = "За іменем директора <b>".$input."</b> знайдено компаній — " . $lc . "\n\n";
                     if ($lc>10) {
-                        $message.="Показываем первые 10 \n\n";
+                        $message.="Показано перші 10 \n\n";
                     }
 
                     $message.=$this->showCompaniesList($rows);
@@ -133,10 +133,10 @@ class iGovBot extends TinyBot{
 
             $result[] = '<b>' . $list[$i]['full_name'] . '</b>' . "\n" .
                 '<i>Код:</i> ' . $list[$i]['code'] . "\n" .
-                '<i>Адрес:</i> ' . $list[$i]['location'] . "\n" .
+                '<i>Адреса:</i> ' . $list[$i]['location'] . "\n" .
                 '<i>Директор:</i> ' . $list[$i]['ceo_name'] . "\n" .
-                '<i>Вид деятельности:</i> ' . $list[$i]['activities'] . "\n" .
-                '<i>Состояние:</i> ' . $list[$i]['status'] . "\n";
+                '<i>Вид діяльності:</i> ' . $list[$i]['activities'] . "\n" .
+                '<i>Стан:</i> ' . $list[$i]['status'] . "\n";
 
         }
         $text = implode("\n\n", $result);
@@ -149,7 +149,7 @@ class iGovBot extends TinyBot{
     function subscription($params) {
         $input=$params['input'];
         $input=trim($input);
-        $message='Не смогли подписаться на уведомления по компании с кодом '.$input;
+        $message='Не вдалося підписатися на сповіщення про компанію з кодом '.$input;
         $state='subscription';
 
 
@@ -161,11 +161,11 @@ class iGovBot extends TinyBot{
                 $subs=LegalUsers::findFirst('entity_id='.$entity_id.' AND user_id='.$user_id);
                 if ($subs) {
                     if ($subs->status==1) {
-                        $message="Вы уже подписаны на уведомления по компании с кодом ".$entity_id;
+                        $message="Вас вже підписано на сповіщення про компанію з кодом ".$entity_id;
                     } else  {
                         $subs->status=1;
                         $subs->save();
-                        $message="Вы снова подписаны на уведомления по компании с кодом ".$entity_id;
+                        $message="Вас знову підписано на сповіщення про компанію з кодом ".$entity_id;
                     }
 
                 } else {
@@ -174,15 +174,15 @@ class iGovBot extends TinyBot{
                     $subs->entity_id=$entity_id;
                     $subs->status=1;
                     $subs->save();
-                    $message="Вы подписаны на уведомления по компании с кодом ".$entity_id;
+                    $message="Вас підписано на сповіщення про компанію з кодом ".$entity_id;
                 }
                 $state='search';
 
             } else {
-                $message="Компании с кодом ".$entity_id.' не найдено, проверьте код и введите снова';
+                $message="Компанію з кодом ".$entity_id.' не знайдено, перевірте код та введіть ще раз';
             }
         } else {
-            $message="Для подписки нужен восьмизначный код компании, проверьте код и введите снова";
+            $message="Для підписки необхідний код компанії з 8 цифр, перевірте код та введіть ще раз";
         }
 
         return array('state'=>$state, 'message'=>$message);
@@ -200,19 +200,19 @@ class iGovBot extends TinyBot{
             $subs=LegalUsers::findFirst('entity_id='.$entity_id.' AND user_id='.$user_id);
             if ($subs) {
                 if ($subs->status == 1) {
-                    $message = "Вы больше не получите уведомления по компании с кодом " . $entity_id;
+                    $message = "Ви більше не отримаєте сповіщень про компанію з кодом " . $entity_id;
                     $subs->status = 0;
                     $subs->save();
                 } else {
-                    $message = "Вы не были подписаны на уведомления по компании с кодом " . $entity_id;
+                    $message = "Вас не підписували на сповіщення про компанію з кодом " . $entity_id;
                 }
             } else {
-                $message = "Вы не были подписаны на уведомления по компании с кодом " . $entity_id;
+                $message = "Вас не підписували на сповіщення про компанію з кодом " . $entity_id;
             }
 
             $state='search';
         } else {
-            $message="Для отписки нужен восьмизначный код компании, проверьте код и введите снова";
+            $message="Для відписки необхідний код компанії з 8 цифр, перевірте код та введіть ще раз";
         }
 
         return array('state'=>$state, 'message'=>$message);

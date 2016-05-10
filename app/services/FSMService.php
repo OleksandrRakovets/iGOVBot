@@ -52,7 +52,7 @@ class FSMService {
 
         if (!$currentState) {
             $currentState=$this->getStateByName('error');
-            $this->data['errormessage']='Нет такой команды';
+            $this->data['errormessage']='Немає такої команди';
         }
 
         $counter=0;
